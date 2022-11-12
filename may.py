@@ -2,10 +2,9 @@ import time
 import requests
 import sys
 
-chave = input("Digite a palavra chave: ")
-
 from bs4 import BeautifulSoup
 
+dork = input("Dork: ")
 
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
@@ -18,15 +17,15 @@ nav = webdriver.Chrome(ChromeDriverManager().install())
 
 
 nav.get("https://google.com.br")
-nav.find_element_by_xpath("/html/body/div[1]/div[3]/form/div[1]/div[1]/div[1]/div/div[2]/input").send_keys("inurl: 'php?id=' " + str(chave))
+nav.find_element_by_xpath("/html/body/div[1]/div[3]/form/div[1]/div[1]/div[1]/div/div[2]/input").send_keys(dork)
 nav.find_element_by_xpath("/html/body/div[1]/div[3]/form/div[1]/div[1]/div[1]/div/div[2]/input").send_keys(Keys.RETURN)
 
 
 
 xD = 2
 
-vuln = open("vuln.txt", 'a+')
 
+vuln = open("vuln.txt", 'a+')
 
 
 
@@ -45,24 +44,32 @@ while True:
     soup = BeautifulSoup(reqs.text, 'html.parser')
     try:
         for link in soup.find_all('a'):
-            data = link.get('href')
-            if data[0] == "/" and data[1] == "u":
-                try:
-                    nav.get("https://google.com" + data)
+            try:
+                data = link.get('href')
+                if data[0] == "/" and data[1] == "u":
+                    try:
+                        nav.get("https://google.com" + data)
 
-                    urldone = nav.current_url
-                    urlshow = urldone
-                    urldone = bye(urldone)
+                        urldone = nav.current_url
+                        urlshow = urldone
+                        urldone = bye(urldone)
 
-                    nav.get(urldone)
-                    found = nav.page_source
-                    if "Mysql" in found or "SQL" in found:
-                        vuln.write(urlshow)
-                        vuln.write('\n')
-                except:
+                        nav.get(urldone)
+                        found = nav.page_source
+                        if "Mysql" in found or "SQL" in found:
+                            vuln.write(urlshow)
+                            vuln.write('\n')
+                            vuln.close()
+                            vuln = open("vuln.txt", 'a+')
+                    except:
+                        pass
+                check = nav.page_source
+                if "captcha-form" in check:
+                    time.sleep(30)
+                    link.next()
+                else:
                     pass
-
-            else:
+            except:
                 pass
         nav.get(urlnative) 
 
