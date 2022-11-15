@@ -66,7 +66,7 @@ while True:
                 check = nav.page_source
                 if "captcha-form" in check:
                     time.sleep(30)
-                    link.next()
+                    link.next()    #nao funciona
                 else:
                     pass
             except:
